@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "violence_dataset",
+			"path": "../../Downloads/violence_dataset"
+		},
+		{
+			"name": "NJTransitOpp",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}
