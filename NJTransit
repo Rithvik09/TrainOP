@@ -9,6 +9,25 @@ from twilio.twiml.voice_response import VoiceResponse
 import tkinter as tk
 from tkinter import filedialog
 from google.cloud import automl_v1beta1
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/NJTransit', methods=['GET', 'POST'])
+def upload_file():
+    if(request.method == 'POST'):
+        file = request.files['file']
+        # Do file processing logic here
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(file_path)
+        os.chdir('/Users/rajshah/NJTransitOpp/TrainOP/NJTransit')
+        script_output = os.popen(f"python my_script.py {file_path}").read()
+        # Return the output of the Python script to the user
+        return script_output
+    return render_template('upload.html')
+
+if __name__ == '__main__':
+    app.run()
 
 # Set up Google Cloud Vision API credentials
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'lucky-outpost-378922-053beba0a783.json'
@@ -114,13 +133,11 @@ def process_image_file(image_file):
     # If a weapon is detected, send a text message and initiate a phone call
     if red_flag:
         # Initiate a phone call using TwiML
-        response = VoiceResponse()
-        response.say(message_body)
         call = twilio_client.calls.create(
-            url='http://demo.twilio.com/docs/voice.xml',
+            twiml='<Response><Say>'+message_body+'</Say></Response>',
             to=to_number,
-            from_=from_number,
-            twiml=str(response)
+            from_=from_number
+            
         )
         print('Call initiated:', call.sid)
     if yellow_flag:
