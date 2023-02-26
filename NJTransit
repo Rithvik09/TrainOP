@@ -1,0 +1,12 @@
+import os
+import io
+import asyncio
+import json
+import urllib
+from google.cloud import vision
+from google.cloud.vision_v1 import types
+import http.client
+
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'cosmic-kite-346117-e30428d17466.json'
+
+client = vision.ImageAnnotatorClient()
