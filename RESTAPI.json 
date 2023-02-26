@@ -1,12 +1,12 @@
 curl -X POST \
-  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Authorization: Bearer AIzaSyC-t2DIj8u3SvCG8a-UBDIfWrf1xscgesE" \
   -H "Content-Type: application/json" \
   --data "{
     'requests': [
       {
         'image': {
           'source': {
-            'imageUri': 'IMAGE_URL_OR_PATH_TO_LOCAL_IMAGE_FILE'
+            'imageUri': '/Users/rajshah/NJTransitOpp/LabelImages'
           }
         },
         'features': [
