@@ -1,58 +1,99 @@
 import os
 import io
-import asyncio
 import json
 import urllib
 from google.cloud import vision
 from google.cloud.vision_v1 import types
-import http.client
+from twilio.rest import Client
+from twilio.twiml.voice_response import VoiceResponse
 
+
+# Set up Google Cloud Vision API credentials
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'lucky-outpost-378922-92aeae33e785.json'
 
-client = vision.ImageAnnotatorClient()
 
-def classify_image(image_file):
-    with open(image_file, 'rb') as image:
-        content = image.read()
+# Set up Twilio account credentials
+from_number = '+18445310653'  # Replace with your Twilio phone number
+to_number = '+16099373573'  # Replace with the phone number to call
+account_sid = 'ACc547d0b3ae8e1807d357e9d28abe75b5'
+auth_token = 'f344ea161355de76c8429640c0cbee27'
+twilio_client = Client(account_sid, auth_token)
 
-    image = vision.Image(content=content)
 
-    response = client.label_detection(image=image)
-    labels = response.label_annotations
+# Define function to process an image file
+def process_image_file(image_file):
+    # Read the image file into memory
+    with io.open(image_file, 'rb') as image_file:
+        content = image_file.read()
 
-    categories = ['concealed weapon', 'spill', 'fight', 'aggressive encounter', 'fare evasion']
+    # Create an image object for the Vision API
+    image = types.Image(content=content)
 
-    # Check if any of the labels match the categories
-    matches = [label.description.lower() in categories for label in labels]
-    return any(matches)
+    # Specify the features to be detected by the Vision API
+    features = [
+        types.Feature(type=types.Feature.Type.OBJECT_LOCALIZATION),
+        types.Feature(type=types.Feature.Type.WEB_DETECTION),
+        types.Feature(type=types.Feature.Type.LABEL_DETECTION)
+    ]
 
-folder_path = '/Users/rajshah/NJTransitOpp/LabelImages'
-for filename in os.listdir(folder_path):
-    if filename.endswith('.jpeg') or filename.endswith('.png') or filename.endswith('.jpg'):
-        image_file = os.path.join(folder_path, filename)
-        with open(image_file, 'rb') as image:
-            content = image.read()
+    # Call the Vision API to detect objects and web annotations
+    client = vision.ImageAnnotatorClient()
+    response = client.annotate_image({
+        'image': image,
+        'features': features,
+    })
 
-        image = vision.Image(content=content)
+    # Initialize message body and call flag
+    message_body = ''
+    red_flag = False
+    yellow_flag = False
 
-        response = client.label_detection(image=image)
-        labels = response.label_annotations
-        categories = []
-        for label in labels:
-            if label.description == "Weapon":
-                categories.append("Concealed Weapon")
-            elif label.description == "Spill":
-                categories.append("Spill")
-            elif label.description == "Fight":
-                categories.append("Fight")
-            elif label.description == "Violence":
-                categories.append("Aggressive Encounter")
-            elif label.description == "Person" and label.score > 0.7:
-                categories.append("Fare Evading Individual")
+    # Check if any weapon labels are detected in the object annotations
+    for annotation in response.localized_object_annotations:
+        if annotation.name in ['Gun', 'Firearm', 'Weapon', 'Knife']:
+            message_body = 'Weapon detected in ' + os.path.basename(image_file.name) + ': ' + annotation.name
+            red_flag = True
+            break
+
+    # Check if any web pages are detected with weapon-related content
+    for page in response.web_detection.pages_with_matching_images:
+        if any(label in page.url for label in ['gun', 'firearm', 'weapon', 'knife']):
+            message_body = 'Weapon-related web page detected in ' + os.path.basename(image_file.name) + ': ' + page.url
+            red_flag = True
+            break
+            
+    for label in response.label_annotations:
+        if any(word in label.description.lower() for word in ['spill', 'trash', 'food', 'drink']):
+            message_body = 'Spill detected: ' + label.description
+            yellow_flag = True
+            break
+
+    # If a weapon is detected, send a text message and initiate a phone call
+    if red_flag:
+        # Initiate a phone call using TwiML
+        response = VoiceResponse()
+        response.say(message_body)
+        call = twilio_client.calls.create(
+            url='http://demo.twilio.com/docs/voice.xml',
+            to=to_number,
+            from_=from_number,
+            twiml=str(response)
+        )
+        print('Call initiated:', call.sid)
+    elif yellow_flag:
+        # Send a text message
+        message = twilio_client.messages.create(
+            body=message_body,
+            from_=from_number,
+            to=to_number
+        )
+        print('Message sent:', message.sid)
+
+
+# Process all image files in the specified folder
+folder_path = r'/Users/rajshah/NJTransitOpp/LabelImages'
+for file_name in os.listdir(folder_path):
+    if file_name.endswith('.jpg') or file_name.endswith('.png') or file_name.endswith('.jpeg'):
+        image_file_path = os.path.join(folder_path, file_name)
+        process_image_file(image_file_path)
         
-        print(f"Categories for {filename}: {categories}")
-
-        
-
-
-
