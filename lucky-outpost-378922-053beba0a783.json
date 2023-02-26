@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "lucky-outpost-378922",
+  "private_key_id": "053beba0a783ab76e38bfd8e9ac7d283ce7b9dad",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCqhFnhRqpJ3rFx\nF2N7Ss0IaTalxSDMi6O/OTq/p+i+ZLchsG+vHD+Tqx5CSbjlom8oWHFJmw2e7bdu\nPlJVesfwKjDT7Rb+6y6sOu3DTZB6+M0EFGtLy3PieqIE64NieG22T1E6rDsCjdmO\nHcHyiYTZL8ZXk4fer/5er7wfStTZ8tM45VyqUnc4mDaIw5I7AjMp51ICreXHACFB\nezsskOfcrkF4kw8Q5aA+nhEN7DTq503Zuy8IQaawRQwZUudxSQceC3PvtqgWMFLD\nt+mzQU9YlQZsYOYiYTU90HrAq7jJ5ky8Ix2hRX8ZxTCHM9j2lYDIJBsnSkBFapYk\nKO8nXqCxAgMBAAECggEAS1gb1tzAlc9enFf3Tx0oJ5VF3k2SRo9VFUOWX+UzhB1A\nhhRN5RQYS4mK30Nv/ZeegjdCJ4HprNXg/UdwXfDYs5gQ5zOVu6Hzh4qqUGfPdWbG\nQA09s8n8NJB3UrE15qbL44h8ne5ITMKc5Jzle+Oj3cusWjoICS++t9vyxejs0Dgw\nA/R9SsMJMFJEpf/qEgE19ccOy9ZEdTUwDLaiboN1Ljge5CkZdvgcmxZPdhvIzO3U\ni1Em20zLAm5mUQxcj9KEsJmggunamjlyTjiAfuCBE5u4xtqXUFV2eM3yJ/xaDn1w\nsQEvg8xyzXvxrVyBAXSbw01jVzRnI+3KcGt/pz0cOQKBgQDliZTGtpOORA1kuJdx\nAfL/nOIKmD2adJL6NOihECiJiUqni/zhAWmIxXp8UA7rExxK+q06SP3spLLffne1\nA3pzvCWR1lBSJDpK2NerKWeWt3vjZEiXDqgUQ71YStovCFTndAaidwbOANNxO1yT\nICIlRjtTL+lQa1vI0CSqwAzsFwKBgQC+LOEUaWQH/Z4HryPEImGcnnZpx4A41SA2\nXI3xG6F2X9w1sHjZz5uaQ9dNIXwNxmhARDoD169PwVWp+/P9J7X1pG2OQI83zHo1\nLueKRU+ZcHyWe2Wbl14MSbkT8eXRTYQJRFipcdEnb3wx9lXGiVSZjNNqxASs8d2X\n3BIg101udwKBgQCpW+jk8WNP7dBAB57dp8WGalex34BcjTTA3fbil8yBJkZp9vTf\ng649Vw+3104ajmAqxmi3/5EzYJYGJwbmDSn1aNYDk7Bx2v8TqIkAZi1jXABR1/Vj\nV1IWmaCEG75+Q1R57fbTOqVPq/ZWrqjweR4YiIhPKaOpTX1MXp8fSVJ/gwKBgQC9\nB3L6jP9HCgqobKfKbrpDqSbeYdTLqNyJ7FmSTPqi5QnHvA+DwN5T6hb5rczXDF3X\nc3mPFDZHuk5h1fRhr7Un4zaabQVuWysl7edsAxTp2WudUC5hB4YOBMGYV5st/jS9\n2VefpWhWIHR8XPRJkXur3NTQjOJw3UB7j93dEuT+ZQKBgQDUbr9d9O1Krgs5kD3O\ngRKOu6rDdIdfQOxqBEhl1UIpEC1VXoTh6R7y01rlnN529zNeey+KvntHhVFRhCx8\n/7p5cJ7wHXdyi5HLkt7Z5eUxiEGgFNLgMC519pui87Ha07Wq3vXVTaYuiGit9bI0\n4s+8UwF6M571hzpGrkG7co6IQA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "njtransit@lucky-outpost-378922.iam.gserviceaccount.com",
+  "client_id": "102500098683987036561",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/njtransit%40lucky-outpost-378922.iam.gserviceaccount.com"
+}
