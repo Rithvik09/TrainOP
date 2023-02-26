@@ -9,28 +9,34 @@ from twilio.twiml.voice_response import VoiceResponse
 import tkinter as tk
 from tkinter import filedialog
 from google.cloud import automl_v1beta1
-from flask import Flask, request, jsonify
-
-app = Flask(__name__)
-
-@app.route('/NJTransit', methods=['GET', 'POST'])
-def upload_file():
-    if(request.method == 'POST'):
-        file = request.files['file']
-        # Do file processing logic here
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-        file.save(file_path)
-        os.chdir('/Users/rajshah/NJTransitOpp/TrainOP/NJTransit')
-        script_output = os.popen(f"python my_script.py {file_path}").read()
-        # Return the output of the Python script to the user
-        return script_output
-    return render_template('upload.html')
-
-if __name__ == '__main__':
-    app.run()
+from flask import Flask, render_template, url_for, request, app
 
 # Set up Google Cloud Vision API credentials
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'lucky-outpost-378922-053beba0a783.json'
+
+app = Flask(__name__)
+
+@app.route('/')
+@app.route("/home")
+def home():
+   return render_template('index.html')
+
+@app.route('/upload', methods=['POST'])
+def upload():
+   if request.method =='POST':
+        file = request.files['file']
+        if file:
+            file.save(os.path.join(app.config['LabellImages'],file))
+            folder_path = r'C:\Users\rithv\HackRU\TrainOP\LabelImages'
+            for file_name in os.listdir(folder_path):
+                if file_name.endswith('.jpg') or file_name.endswith('.png') or file_name.endswith('.jpeg'):
+                    image_file_path = os.path.join(folder_path, file_name)
+                    process_image_file(image_file_path)
+                    return "Success"
+            
+
+if __name__ == "__main__":
+    app.run(debug=True)
 
 
 def get_prediction(content, project_id, model_id):
@@ -48,15 +54,12 @@ def get_prediction(content, project_id, model_id):
   return label, score  
 
 
-
-
 # Set up Twilio account credentials
 from_number = '+18445310653'
 to_number = '+16099373573'
 account_sid = 'ACc547d0b3ae8e1807d357e9d28abe75b5'
 auth_token = 'f344ea161355de76c8429640c0cbee27'
 twilio_client = Client(account_sid, auth_token)
-
 
 
 
@@ -149,8 +152,4 @@ def process_image_file(image_file):
         )
         print('Message sent:', message.sid)
 
-folder_path = r'C:\Users\rithv\.vscode\extensions\TrainOP\LabelImages'
-for file_name in os.listdir(folder_path):
-    if file_name.endswith('.jpg') or file_name.endswith('.png') or file_name.endswith('.jpeg'):
-        image_file_path = os.path.join(folder_path, file_name)
-        process_image_file(image_file_path)
+
