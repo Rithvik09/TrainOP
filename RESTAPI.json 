@@ -1,0 +1,21 @@
+curl -X POST \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --data "{
+    'requests': [
+      {
+        'image': {
+          'source': {
+            'imageUri': 'IMAGE_URL_OR_PATH_TO_LOCAL_IMAGE_FILE'
+          }
+        },
+        'features': [
+          {
+            'type': 'LABEL_DETECTION',
+            'maxResults': 10
+          }
+        ]
+      }
+    ]
+  }" \
+  "https://vision.googleapis.com/v1/images:annotate"
