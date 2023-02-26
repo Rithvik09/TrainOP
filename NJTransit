@@ -7,6 +7,52 @@ from google.cloud import vision
 from google.cloud.vision_v1 import types
 import http.client
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'cosmic-kite-346117-e30428d17466.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'lucky-outpost-378922-92aeae33e785.json'
 
 client = vision.ImageAnnotatorClient()
+
+def classify_image(image_file):
+    with open(image_file, 'rb') as image:
+        content = image.read()
+
+    image = vision.Image(content=content)
+
+    response = client.label_detection(image=image)
+    labels = response.label_annotations
+
+    categories = ['concealed weapon', 'spill', 'fight', 'aggressive encounter', 'fare evasion']
+
+    # Check if any of the labels match the categories
+    matches = [label.description.lower() in categories for label in labels]
+    return any(matches)
+
+folder_path = '/Users/rajshah/NJTransitOpp/LabelImages'
+for filename in os.listdir(folder_path):
+    if filename.endswith('.jpeg') or filename.endswith('.png') or filename.endswith('.jpg'):
+        image_file = os.path.join(folder_path, filename)
+        with open(image_file, 'rb') as image:
+            content = image.read()
+
+        image = vision.Image(content=content)
+
+        response = client.label_detection(image=image)
+        labels = response.label_annotations
+        categories = []
+        for label in labels:
+            if label.description == "Weapon":
+                categories.append("Concealed Weapon")
+            elif label.description == "Spill":
+                categories.append("Spill")
+            elif label.description == "Fight":
+                categories.append("Fight")
+            elif label.description == "Violence":
+                categories.append("Aggressive Encounter")
+            elif label.description == "Person" and label.score > 0.7:
+                categories.append("Fare Evading Individual")
+        
+        print(f"Categories for {filename}: {categories}")
+
+        
+
+
+
