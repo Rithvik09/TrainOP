@@ -12,32 +12,7 @@ from google.cloud import automl_v1beta1
 from flask import Flask, render_template, url_for, request, app
 
 # Set up Google Cloud Vision API credentials
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'lucky-outpost-378922-053beba0a783.json'
-
-app = Flask(__name__)
-
-@app.route('/')
-@app.route("/home")
-def home():
-   return render_template('index.html')
-
-@app.route('/upload', methods=['POST'])
-def upload():
-   if request.method =='POST':
-        file = request.files['file']
-        if file:
-            file.save(os.path.join(app.config['LabellImages'],file))
-            folder_path = r'C:\Users\rithv\HackRU\TrainOP\LabelImages'
-            for file_name in os.listdir(folder_path):
-                if file_name.endswith('.jpg') or file_name.endswith('.png') or file_name.endswith('.jpeg'):
-                    image_file_path = os.path.join(folder_path, file_name)
-                    process_image_file(image_file_path)
-                    return "Success"
-            
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
+# Set GOOGLE_APPLICATION_CREDENTIALS in your environment to your service-account key path
 
 def get_prediction(content, project_id, model_id):
   prediction_client = automl_v1beta1.PredictionServiceClient()
@@ -55,10 +30,10 @@ def get_prediction(content, project_id, model_id):
 
 
 # Set up Twilio account credentials
-from_number = '+1XXXXXXXXXX'
-to_number = '+1XXXXXXXXXX'
-account_sid = 'AC_REDACTED_TWILIO_SID'
-auth_token = 'REDACTED'
+from_number = os.environ['TWILIO_FROM_NUMBER']
+to_number = os.environ['TWILIO_TO_NUMBER']
+account_sid = os.environ['TWILIO_ACCOUNT_SID']
+auth_token = os.environ['TWILIO_AUTH_TOKEN']
 twilio_client = Client(account_sid, auth_token)
 
 
@@ -91,6 +66,7 @@ def process_image_file(image_file):
 
 
     # Initialize message body and call flag
+    
     message_body = ''
     red_flag = False
     yellow_flag = False
@@ -102,17 +78,17 @@ def process_image_file(image_file):
 
 
     if(label == 'violent' and score > 0.6):
-        message_body = 'Violent encounter detected in ' + os.path.basename(image_file.name) + ': ' + annotation.name
+        message_body = 'Violent encounter detected in ' + os.path.basename(image_file.name) 
         red_flag = True
     elif((label == 'violent' and score < 0.6) or (label == 'nonviolent' and score < 0.3) ):
-        message_body = 'Potential violent encounter detected in ' + os.path.basename(image_file.name) + ': ' + annotation.name
+        message_body = 'Potential violent encounter detected in ' + os.path.basename(image_file.name) 
         yellow_flag = True
 
 
     # Check if any weapon labels are detected in the object annotations
     for annotation in response.localized_object_annotations:
         if annotation.name in ['Gun', 'Firearm', 'Weapon', 'Knife']:
-            message_body = 'Weapon detected in ' + os.path.basename(image_file.name) + ': ' + annotation.name
+            message_body = 'Weapon detected in ' + os.path.basename(image_file.name)
             red_flag = True
             break
 
@@ -120,7 +96,7 @@ def process_image_file(image_file):
     # Check if any web pages are detected with weapon-related content
     for page in response.web_detection.pages_with_matching_images:
         if any(label in page.url for label in ['gun', 'firearm', 'weapon', 'knife']):
-            message_body = 'Weapon-related web page detected in ' + os.path.basename(image_file.name) + ': ' + page.url
+            message_body = 'Weapon   detected in ' + os.path.basename(image_file.name) 
             red_flag = True
             break
 
@@ -142,7 +118,7 @@ def process_image_file(image_file):
             from_=from_number
             
         )
-        print('Call initiated:', call.sid)
+        print('Call initiated')
     if yellow_flag:
         # Send a text message
         message = twilio_client.messages.create(
@@ -152,4 +128,9 @@ def process_image_file(image_file):
         )
         print('Message sent:', message.sid)
 
-
+folder_path = 'C://Users//rithv//HackRU//TrainOP//LabelImages'
+for file_name in os.listdir(folder_path):
+    if file_name.endswith('.jpg') or file_name.endswith('.png') or file_name.endswith('.jpeg'):
+        image_file_path = os.path.join(folder_path, file_name)
+        process_image_file(image_file_path)
+                    

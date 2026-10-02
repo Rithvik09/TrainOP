@@ -1,39 +1,13 @@
-import React, { useState } from 'react';
-
-function FileUploader() {
-  const [selectedFile, setSelectedFile] = useState(null);
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append("file", fileInput.current.files[0]);
-  
-    fetch("http://localhost:5000/NJTransit", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        // Handle response from backend here
-      })
-      .catch((error) => {
-        console.error(error);
-        // Handle error from backend here
-      });
-  };
-  
-
-  const handleFileInputChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input type="file" onChange={handleFileInputChange} />
-      <button type="submit">Upload File</button>
-    </form>
-  );
-}
-
-export default FileUploader;
+document.getElementById("folder-form").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent form from submitting normally
+    
+    var fileInput = document.getElementById("folder-path");
+    var folderPath = fileInput.files[0].webkitRelativePath; // Get the selected file path
+    
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/upload");
+    xhr.setRequestHeader("Content-Type", "multipart/form-data");
+    var formData = new FormData();
+    formData.append("folder_path", folderPath);
+    xhr.send(formData); // Send the selected file path to the backend Python script
+});
